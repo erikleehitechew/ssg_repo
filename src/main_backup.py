@@ -7,6 +7,11 @@ from gencontent import generate_page, generate_pages_recursive
 
 def copy_files_recursive(current_path, destination):
 
+    basepath = "/"
+
+    sys.argv[0] = basepath
+
+
     if not os.path.exists(destination):
         os.mkdir(destination)
     
@@ -28,28 +33,20 @@ def copy_files_recursive(current_path, destination):
             shutil.copy(from_path, to_path)
 
 def main():
-    basepath = "/"
-
-    if len(sys.argv) > 1:
-        basepath = sys.argv[1]
-
-    #input(f"Basepath: {basepath}, please press any key to continue")
-
     #testnode = TextNode("This is some anchor text", TextType.LINK, "https://www.boot.dev")
     #print(testnode)
-    if os.path.exists("./docs"):
-        shutil.rmtree("./docs") # remove current public folder
+    if os.path.exists("./public"):
+        shutil.rmtree("./public") # remove current public folder
 
-    copy_files_recursive("./static", "./docs")
+    copy_files_recursive("./static", "./public")
     
-    from_path = "content"
-    template_path = "template.html"
-    #dest_dir = "public"
-    dest_dir = "docs"
+    from_path = sys.argv[1]
+    template_path = sys.argv[2]
+    dest_dir = sys.argv[3]
 
     if os.path.isdir(from_path):
-        generate_pages_recursive(from_path, template_path, dest_dir, basepath)
+        generate_pages_recursive(from_path, template_path, dest_dir)
     else:
-        generate_page(from_path, template_path, os.path.join(dest_dir, "index.html"), basepath)
+        generate_page(from_path, template_path, os.path.join(dest_dir, "index.html"))
 
 main()

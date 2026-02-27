@@ -5,7 +5,7 @@ from markdown_to_hnode import markdown_to_html_node
 
 import os, shutil
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath = "/"):
     with open(from_path) as f:
         frompath_contents = f.read()
 
@@ -18,16 +18,14 @@ def generate_page(from_path, template_path, dest_path):
 
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
-    #print(f"Page title: {pagetitle}")
-
-    templatepath_contents = templatepath_contents.replace("{{ Title }}", pagetitle).replace("{{ Content }}", htmlstring)
+    templatepath_contents = templatepath_contents.replace("{{ Title }}", pagetitle).replace("{{ Content }}", htmlstring).replace("href=\"/", f'href="{basepath}').replace("src=\"/", f'src="{basepath}')
 
     os.makedirs(os.path.dirname(dest_path), exist_ok = True)
 
     with open(dest_path, "w") as d:
         d.write(templatepath_contents)
 
-def generate_pages_recursive(content_dir, template_path, dest_dir):
+def generate_pages_recursive(content_dir, template_path, dest_dir, basepath = "/"):
     for root, _, files in os.walk(content_dir):
         for file in files:
             if file != "index.md":
@@ -39,4 +37,4 @@ def generate_pages_recursive(content_dir, template_path, dest_dir):
             os.makedirs(out_dir, exist_ok = True)
 
             html_path = os.path.join(out_dir, "index.html")
-            generate_page(md_path, template_path, html_path)
+            generate_page(md_path, template_path, html_path, basepath)
